@@ -604,4 +604,148 @@
             <span>⬛ Канал с Отзывами</span>
             <span class="badge-tag">@qimeg</span>
         </a>
-        <a href="https://t.me/Foxxs1s" class="action-link" target="_blank" onclic
+        <a href="https://t.me/Foxxs1s" class="action-link" target="_blank" onclick="playClickSound()">
+            <span>💬 Купить / Связь в ЛС</span>
+            <span class="badge-tag">@Foxxs1s</span>
+        </a>
+    </div>
+
+    <!-- TAB 2: Reviews -->
+    <div id="tab-reviews" class="tab-pane">
+        <div class="review-card">
+            «Просто лучший, очень сильно помог! Люблю @Foxxs1s ❤️»
+        </div>
+        <div class="review-card">
+            «Имба бесплатная обучалка и деф, помог разрешить трабл с типом!»
+            <div class="review-author">— Участник сообщества</div>
+        </div>
+        <div class="review-card">
+            «Купила приват у @Foxxs1s, всё прошло быстро и четко. Всем советую!»
+            <div class="review-author">— Покупатель</div>
+        </div>
+        <div class="review-card">
+            «Лучший пробив, всегда точная и верная информация! Настоящая легенда, сделал всё быстро и качественно.»
+            <div class="review-author">— Довольный клиент</div>
+        </div>
+        <div class="review-card">
+            «Задефал лучший🙏 Всё честно, без скама, помог и спас в сложной ситуации!»
+            <div class="review-author">— @iditenahyivse67</div>
+        </div>
+        <div class="review-card">
+            «Обучалка имба, выдал приват за минут 30. По моему мнению, стоит каждой копейки.»
+            <div class="review-author">— Ученик</div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        Powered by <strong>Ruslan</strong> | <a href="https://t.me/EPSTEIN3152616769" target="_blank">@EPSTEIN3152616769</a>
+    </footer>
+</div>
+
+<div id="toast" class="toast">Юзернейм скопирован!</div>
+
+<script>
+    function switchTab(tabId, btn) {
+        playClickSound();
+        document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playClickSound() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.05);
+    }
+
+    function copyToClipboard(text) {
+        playClickSound();
+        navigator.clipboard.writeText(text).then(() => {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        });
+    }
+
+    const card = document.getElementById('tilt-card');
+    document.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        card.style.transform = `perspective(1000px) rotateX(${-y / 25}deg) rotateY(${x / 25}deg)`;
+    });
+    document.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+    });
+
+    const canvas = document.getElementById('interactive-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+
+    function initCanvas() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        particles = Array.from({ length: Math.floor(width / 25) }, () => ({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            radius: Math.random() * 1.8 + 0.5
+        }));
+    }
+
+    window.addEventListener('resize', initCanvas);
+    initCanvas();
+
+    function drawParticles() {
+        ctx.clearRect(0, 0, width, height);
+        
+        particles.forEach((p, i) => {
+            p.x += p.vx;
+            p.y += p.vy;
+
+            if (p.x < 0 || p.x > width) p.vx *= -1;
+            if (p.y < 0 || p.y > height) p.vy *= -1;
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0, 243, 255, 0.4)';
+            ctx.fill();
+
+            for (let j = i + 1; j < particles.length; j++) {
+                const p2 = particles[j];
+                const dx = p.x - p2.x;
+                const dy = p.y - p2.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 110) {
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.strokeStyle = `rgba(0, 243, 255, ${0.15 * (1 - dist / 110)})`;
+                    ctx.lineWidth = 0.6;
+                    ctx.stroke();
+                }
+            }
+        });
+
+        requestAnimationFrame(drawParticles);
+    }
+    drawParticles();
+</script>
+
+</body>
+</html>
