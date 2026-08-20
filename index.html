@@ -2,20 +2,26 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>#Foksяяя — Official Cyber Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>#Foksяяя — Enterprise Security & OSINT Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg-base: #06080d;
-            --card-bg: rgba(18, 24, 38, 0.65);
-            --card-border: rgba(102, 252, 241, 0.15);
-            --accent-cyan: #66fcf1;
-            --accent-glow: rgba(102, 252, 241, 0.4);
-            --price-gold: #ffbd59;
-            --price-glow: rgba(255, 189, 89, 0.3);
-            --text-main: #f0f4f8;
-            --text-muted: #8e9bb0;
+            --bg-dark: #030508;
+            --card-glass: rgba(13, 19, 31, 0.65);
+            --card-border: rgba(0, 243, 255, 0.18);
+            --neon-cyan: #00f3ff;
+            --neon-purple: #9d4edd;
+            --neon-gold: #ffb703;
+            --glow-cyan: rgba(0, 243, 255, 0.35);
+            --glow-gold: rgba(255, 183, 3, 0.25);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --radius-xl: 28px;
+            --radius-m: 16px;
         }
 
         * {
@@ -24,12 +30,14 @@
             padding: 0;
             font-family: 'Plus Jakarta Sans', sans-serif;
             -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
 
         body {
-            background-color: var(--bg-base);
-            color: var(--text-main);
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -38,416 +46,558 @@
             position: relative;
         }
 
-        /* Интерактивный интерактивный фон Canvas */
-        #bg-canvas {
+        /* 3D Ambient Background Mesh */
+        #interactive-canvas {
             position: fixed;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100vw;
             height: 100vh;
-            z-index: -1;
+            z-index: 0;
             pointer-events: none;
         }
 
-        .hub-container {
-            max-width: 540px;
+        .ambient-glow {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--glow-cyan) 0%, transparent 70%);
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Layout Container */
+        .hub-wrapper {
+            position: relative;
+            z-index: 10;
+            max-width: 520px;
             width: 100%;
             display: flex;
             flex-direction: column;
             gap: 20px;
-            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: emerge 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Карточка профиля */
+        /* Profile Header Card */
         .profile-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-radius: 24px;
-            padding: 28px 24px 20px;
+            background: var(--card-glass);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: var(--radius-xl);
+            padding: 32px 24px 24px;
             text-align: center;
             border: 1px solid var(--card-border);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
             position: relative;
             overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.2s ease-out;
         }
 
-        .avatar-container {
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 243, 255, 0.08);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--neon-cyan);
+            margin-bottom: 20px;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
+        }
+
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--neon-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--neon-cyan);
+            animation: pulse 1.8s infinite;
+        }
+
+        .avatar-frame {
             position: relative;
-            width: 96px;
-            height: 96px;
-            margin: 0 auto 16px;
+            width: 104px;
+            height: 104px;
+            margin: 0 auto 18px;
         }
 
-        .avatar {
+        .avatar-img {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-cyan), #1b4965);
+            background: linear-gradient(135deg, #00f3ff 0%, #7928ca 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 38px;
+            font-size: 42px;
             font-weight: 800;
-            color: #06080d;
-            box-shadow: 0 0 25px var(--accent-glow);
+            color: #030508;
+            font-family: 'Space Grotesk', sans-serif;
+            box-shadow: 0 0 30px var(--glow-cyan);
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
 
         .avatar-ring {
             position: absolute;
-            inset: -4px;
+            inset: -6px;
             border-radius: 50%;
-            border: 2px stroke transparent;
-            background: linear-gradient(45deg, var(--accent-cyan), transparent, var(--price-gold)) border-box;
-            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: destination-out;
-            mask-composite: exclude;
-            animation: rotate 6s linear infinite;
+            background: conic-gradient(from 0deg, var(--neon-cyan), transparent, var(--neon-purple), var(--neon-cyan));
+            animation: spinRing 4s linear infinite;
+            filter: blur(1px);
         }
 
-        .profile-card h1 {
-            font-size: 26px;
+        .profile-title {
+            font-size: 28px;
             font-weight: 800;
             letter-spacing: -0.5px;
-            margin-bottom: 6px;
-            background: linear-gradient(180deg, #ffffff 0%, var(--text-muted) 100%);
+            margin-bottom: 8px;
+            background: linear-gradient(180deg, #ffffff 30%, #a1a1aa 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .profile-card p {
-            color: var(--text-muted);
+        .profile-desc {
+            color: var(--text-secondary);
             font-size: 14px;
             font-weight: 500;
+            line-height: 1.5;
         }
 
-        /* Баннер цены */
-        .price-banner {
-            background: rgba(35, 26, 12, 0.5);
-            border: 1px solid var(--price-gold);
-            box-shadow: 0 0 20px var(--price-glow);
-            border-radius: 16px;
-            padding: 16px;
-            margin-top: 18px;
+        /* Luxury Offer Banner */
+        .price-card {
+            background: linear-gradient(135deg, rgba(255, 183, 3, 0.08) 0%, rgba(15, 23, 42, 0.8) 100%);
+            border: 1px solid rgba(255, 183, 3, 0.4);
+            border-radius: var(--radius-m);
+            padding: 18px 20px;
+            margin-top: 22px;
             position: relative;
             overflow: hidden;
-            transition: transform 0.3s ease;
+            box-shadow: 0 10px 25px var(--glow-gold);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .price-banner:hover {
-            transform: translateY(-2px);
+        .price-card:hover {
+            transform: translateY(-2px) scale(1.01);
+            border-color: var(--neon-gold);
+            box-shadow: 0 15px 35px rgba(255, 183, 3, 0.35);
         }
 
-        .price-banner .title {
+        .price-title {
             font-size: 12px;
-            color: var(--price-gold);
+            color: var(--neon-gold);
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            font-weight: 700;
-            margin-bottom: 4px;
+            font-weight: 800;
+            margin-bottom: 6px;
         }
 
-        .price-banner .amount {
+        .price-val {
             font-size: 24px;
             font-weight: 800;
             color: #ffffff;
-        }
-
-        /* Навигация по вкладкам (Tabs) */
-        .tab-nav {
+            font-family: 'Space Grotesk', sans-serif;
             display: flex;
-            background: rgba(12, 16, 26, 0.7);
-            border-radius: 16px;
-            padding: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            gap: 6px;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .tab-btn {
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            background: rgba(10, 15, 26, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 18px;
+            padding: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            gap: 4px;
+        }
+
+        .nav-btn {
             flex: 1;
             padding: 12px;
             border: none;
             background: transparent;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             font-weight: 700;
-            font-size: 14px;
-            border-radius: 12px;
+            font-size: 13px;
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
-        .tab-btn.active {
-            background: var(--card-bg);
-            color: var(--accent-cyan);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--card-border);
+        .nav-btn.active {
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.15) 0%, rgba(15, 23, 42, 0.9) 100%);
+            color: var(--neon-cyan);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
 
-        /* Переключаемый контент */
-        .tab-content {
+        /* Content Sections */
+        .tab-pane {
             display: none;
             flex-direction: column;
             gap: 12px;
-            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        .tab-content.active {
+        .tab-pane.active {
             display: flex;
+            animation: fadeInTab 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* Ссылки */
-        .link-btn {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            color: var(--text-main);
+        /* Action Buttons / Links */
+        .action-link {
+            background: var(--card-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: var(--text-primary);
             text-decoration: none;
-            padding: 16px 20px;
-            border-radius: 16px;
+            padding: 18px 22px;
+            border-radius: var(--radius-m);
             font-weight: 600;
             font-size: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid var(--card-border);
-            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             overflow: hidden;
         }
 
-        .link-btn::before {
+        .action-link::before {
             content: '';
             position: absolute;
             top: 0;
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(102, 252, 241, 0.1), transparent);
-            transition: left 0.5s ease;
+            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.15), transparent);
+            transition: left 0.6s ease;
         }
 
-        .link-btn:hover {
-            transform: translateY(-3px);
-            border-color: var(--accent-cyan);
-            box-shadow: 0 8px 20px var(--accent-glow);
+        .action-link:hover {
+            transform: translateY(-3px) scale(1.01);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 12px 30px rgba(0, 243, 255, 0.2);
+            background: rgba(18, 28, 45, 0.85);
         }
 
-        .link-btn:hover::before {
+        .action-link:hover::before {
             left: 100%;
         }
 
-        .link-tag {
-            font-size: 13px;
-            color: var(--accent-cyan);
-            background: rgba(102, 252, 241, 0.1);
-            padding: 4px 10px;
-            border-radius: 20px;
+        .badge-tag {
+            font-size: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--neon-cyan);
+            background: rgba(0, 243, 255, 0.1);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 100px;
             font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
-        /* Отзывы */
+        /* Review Cards */
         .review-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            padding: 18px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: var(--card-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: var(--radius-m);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-left: 3px solid var(--neon-cyan);
             font-size: 14px;
-            line-height: 1.5;
-            transition: transform 0.2s ease;
+            line-height: 1.6;
+            transition: all 0.3s ease;
         }
 
         .review-card:hover {
-            transform: scale(1.01);
-            border-color: var(--card-border);
+            border-color: var(--neon-cyan);
+            transform: translateX(4px);
         }
 
-        .review-user {
-            color: var(--accent-cyan);
+        .review-author {
+            color: var(--neon-cyan);
             font-size: 12px;
             font-weight: 700;
-            margin-top: 10px;
-            display: block;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        /* Футер */
+        /* Analytics Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .stat-box {
+            background: var(--card-glass);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 16px 10px;
+            border-radius: var(--radius-m);
+            text-align: center;
+        }
+
+        .stat-num {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--neon-cyan);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .stat-lbl {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--neon-cyan);
+            color: #030508;
+            padding: 10px 24px;
+            border-radius: 100px;
+            font-weight: 800;
+            font-size: 13px;
+            box-shadow: 0 10px 30px var(--glow-cyan);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Footer */
         .footer {
             margin-top: 10px;
-            padding: 20px 0;
+            padding: 24px 0 10px;
             text-align: center;
             font-size: 13px;
-            color: var(--text-muted);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
             flex-shrink: 0;
         }
 
         .footer a {
-            color: var(--accent-cyan);
+            color: var(--neon-cyan);
             text-decoration: none;
             font-weight: 700;
-            transition: opacity 0.2s ease;
+            transition: all 0.2s ease;
         }
 
         .footer a:hover {
-            opacity: 0.8;
-            text-decoration: underline;
+            text-shadow: 0 0 10px var(--glow-cyan);
         }
 
-        /* Анимации */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+        /* Animations */
+        @keyframes emerge {
+            from { opacity: 0; transform: translateY(30px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes fadeInTab {
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes rotate {
+        @keyframes spinRing {
+            0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
         }
     </style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
+<div class="ambient-glow"></div>
+<canvas id="interactive-canvas"></canvas>
 
-<div class="hub-container">
-    <!-- Профиль -->
-    <div class="profile-card">
-        <div class="avatar-container">
+<div class="hub-wrapper">
+    <!-- Header Card -->
+    <div class="profile-card" id="tilt-card">
+        <div class="status-badge">
+            <div class="pulse-dot"></div> SYSTEM ONLINE
+        </div>
+        <div class="avatar-frame">
             <div class="avatar-ring"></div>
-            <div class="avatar">F</div>
+            <div class="avatar-img">F</div>
         </div>
-        <h1>Foksяяя ★</h1>
-        <p>Защита от угроз в сети | Обучение | Надёжный деф</p>
+        <h1 class="profile-title">#Foksяяя ★</h1>
+        <p class="profile-desc">Защита от угроз в сети | Обучение | Надёжный деф</p>
 
-        <div class="price-banner">
-            <div class="title">🎓 Обучение (Осинт / Докс / Мануалы)</div>
-            <div class="amount">120 ₽ или 100 ⭐️</div>
+        <!-- Dynamic Price Banner -->
+        <div class="price-card" onclick="copyToClipboard('@Foxxs1s')">
+            <div class="price-title">🎓 Обучение (Осинт / Докс / Мануалы)</div>
+            <div class="price-val">120 ₽ <span style="font-size:14px; opacity:0.6;">ИЛИ</span> 100 ⭐️</div>
         </div>
     </div>
 
-    <!-- Вкладки навигации -->
-    <div class="tab-nav">
-        <button class="tab-btn active" onclick="switchTab('links', this)">Ссылки</button>
-        <button class="tab-btn" onclick="switchTab('reviews', this)">Отзывы</button>
+    <!-- Quick Stats -->
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-num">100%</div>
+            <div class="stat-lbl">Гарантия</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-num">24/7</div>
+            <div class="stat-lbl">Поддержка</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-num">FREE</div>
+            <div class="stat-lbl">Тест Деф</div>
+        </div>
     </div>
 
-    <!-- Вкладка 1: Ссылки -->
-    <div id="links" class="tab-content active">
-        <a href="https://t.me/xuxile" class="link-btn" target="_blank">
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+        <button class="nav-btn active" onclick="switchTab('tab-links', this)">
+            ⚡ Ссылки
+        </button>
+        <button class="nav-btn" onclick="switchTab('tab-reviews', this)">
+            💬 Отзывы
+        </button>
+    </div>
+
+    <!-- TAB 1: Links -->
+    <div id="tab-links" class="tab-pane active">
+        <a href="https://t.me/xuxile" class="action-link" target="_blank" onclick="playClickSound()">
             <span>🏴‍☠️ Канал с Обучением</span>
-            <span class="link-tag">@xuxile</span>
+            <span class="badge-tag">@xuxile</span>
         </a>
-        <a href="https://t.me/swsry" class="link-btn" target="_blank">
+        <a href="https://t.me/swsry" class="action-link" target="_blank" onclick="playClickSound()">
             <span>🪖 Основной ТГК</span>
-            <span class="link-tag">@swsry</span>
+            <span class="badge-tag">@swsry</span>
         </a>
-        <a href="https://t.me/Foksixxxx" class="link-btn" target="_blank">
+        <a href="https://t.me/Foksixxxx" class="action-link" target="_blank" onclick="playClickSound()">
             <span>🏁 Бесплатный Деф (Free Deff)</span>
-            <span class="link-tag">FREE</span>
+            <span class="badge-tag">FREE</span>
         </a>
-        <a href="https://t.me/qimeg" class="link-btn" target="_blank">
+        <a href="https://t.me/qimeg" class="action-link" target="_blank" onclick="playClickSound()">
             <span>⬛ Канал с Отзывами</span>
-            <span class="link-tag">@qimeg</span>
+            <span class="badge-tag">@qimeg</span>
         </a>
-        <a href="https://t.me/Foxxs1s" class="link-btn" target="_blank">
+        <a href="https://t.me/Foxxs1s" class="action-link" target="_blank" onclick="playClickSound()">
             <span>💬 Купить / Связь в ЛС</span>
-            <span class="link-tag">@Foxxs1s</span>
+            <span class="badge-tag">@Foxxs1s</span>
         </a>
     </div>
 
-    <!-- Вкладка 2: Отзывы -->
-    <div id="reviews" class="tab-content">
+    <!-- TAB 2: Reviews -->
+    <div id="tab-reviews" class="tab-pane">
         <div class="review-card">
             «Просто лучший, очень сильно помог! Люблю @Foxxs1s ❤️»
         </div>
         <div class="review-card">
             «Имба бесплатная обучалка и деф, помог разрешить трабл с типом!»
-            <span class="review-user">— Участник сообщества</span>
+            <div class="review-author">— Участник сообщества</div>
         </div>
         <div class="review-card">
             «Купила приват у @Foxxs1s, всё прошло быстро и четко. Всем советую!»
-            <span class="review-user">— Покупатель</span>
+            <div class="review-author">— Покупатель</div>
         </div>
         <div class="review-card">
             «Лучший пробив, всегда точная и верная информация! Настоящая легенда, сделал всё быстро и качественно.»
-            <span class="review-user">— Довольный клиент</span>
+            <div class="review-author">— Довольный клиент</div>
         </div>
         <div class="review-card">
             «Задефал лучший🙏 Всё честно, без скама, помог и спас в сложной ситуации!»
-            <span class="review-user">— @iditenahyivse67</span>
+            <div class="review-author">— @iditenahyivse67</div>
         </div>
         <div class="review-card">
             «Обучалка имба, выдал приват за минут 30. По моему мнению, стоит каждой копейки.»
-            <span class="review-user">— Ученик</span>
+            <div class="review-author">— Ученик</div>
         </div>
     </div>
 
-    <!-- Подвал -->
+    <!-- Copyright Footer -->
     <footer class="footer">
         Powered by <strong>Ruslan</strong> | <a href="https://t.me/EPSTEIN3152616769" target="_blank">@EPSTEIN3152616769</a>
     </footer>
 </div>
 
+<div id="toast" class="toast">Юзернейм скопирован!</div>
+
 <script>
-    // Переключение вкладок
-    function switchTab(tabId, element) {
-        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    // Tab Switching System
+    function switchTab(tabId, btn) {
+        playClickSound();
+        document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
         
         document.getElementById(tabId).classList.add('active');
-        element.classList.add('active');
+        btn.classList.add('active');
     }
 
-    // Фоновая интерактивная анимация Canvas
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-
-    function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+    // Web Audio Sound Effect
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playClickSound() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.05);
     }
-    window.addEventListener('resize', resize);
-    resize();
 
-    const particles = Array.from({ length: 45 }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 1.5 + 0.5,
-        speedX: (Math.random() - 0.5) * 0.4,
-        speedY: (Math.random() - 0.5) * 0.4,
-        alpha: Math.random() * 0.5 + 0.2
-    }));
-
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        particles.forEach(p => {
-            p.x += p.speedX;
-            p.y += p.speedY;
-
-            if (p.x < 0) p.x = canvas.width;
-            if (p.x > canvas.width) p.x = 0;
-            if (p.y < 0) p.y = canvas.height;
-            if (p.y > canvas.height) p.y = 0;
-
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(102, 252, 241, ${p.alpha})`;
-            ctx.fill();
+    // Copy to clipboard notification
+    function copyToClipboard(text) {
+        playClickSound();
+        navigator.clipboard.writeText(text).then(() => {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
         });
-
-        requestAnimationFrame(animate);
     }
-    animate();
-</script>
 
-</body>
-</html>
+    // 3D Parallax Tilt Effect for Profile Card
+    const card = document.getElementById('tilt-card');
+    document.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        card.style.transform = `perspective(1000px) rotateX(${-y / 25}deg) rotateY(${x / 25}deg)`;
+    });
+    document.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+    });
 
+    // Particle Constellation Background Canvas
+    const canvas = document.getElementById('interactive-can
